@@ -1,0 +1,31 @@
+#!/bin/bash
+#Created by Joshua Bartley
+#Purpose Macs Suck at Windows File Sharing which also sucks
+#8/23/2015
+
+#Declare default user username
+default_user='username'
+
+#Echo Display to let user know script has begun
+echo -e "\x1b[93mRunning CompanyName OS-X Re-Mount ScriptÉ\x1b[0m"
+
+#Change Directory to default mount location on OS-X.  Unmount Share & re-make Share Directory.
+cd /Volumes
+umount /ShareName
+mkdir /Volumes/ShareName
+
+# Get username.  If the Enter key is clicked, default to User.
+read -p "Username ($default_user): " user
+
+if [[ $user == '' ]]; then
+    user=$default_user
+fi
+
+#Make Directory within default mount location on OS-X.  Mount user at Windows File Share.
+mkdir /Volumes/ShareName
+mount -t smbfs //"$user"@000.000.000.000/ShareName
+
+#Apple Script to open Finder within current working directory % close application Terminal when finished with script.
+cd /Volumes/ShareName
+osascript -e "tell application \"Finder\" to open POSIX file \"`pwd`\""
+osascript -e 'tell application "Terminal" to close first window' & exit
